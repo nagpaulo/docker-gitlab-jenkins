@@ -1,0 +1,75 @@
+version: '3.9'
+services:
+    jenkins:
+        image: jenkins/jenkins:jdk11
+        container_name: jenkins
+        hostname: jenkins
+        privileged: true
+        # network_mode: "bridge"
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8086:8080"
+            - "50000:50000"
+        volumes:
+            - /var/jenkins_home
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /usr/bin/docker:/usr/bin/docker
+            - jenkins_backup:/srv/backup/
+        depends_on:
+            - gitlab
+            # - sonar
+        deploy:
+            resources:
+                limits:
+                    cpus: '2'
+                    memory: 500M
+        # networks:
+        #     - hr-net
+        #     - interna
+    gitlab:
+        container_name: gitlab
+        image: gitlab/gitlab-ce
+        ports:
+            - "8050:80"
+            - "8443:443"
+            - "8022:22"
+        hostname: gitlab
+        # network_mode: "bridge"
+        volumes:
+            - /etc/gitlab
+            - /var/log/gitlab
+            - /var/opt/gitlab
+        deploy:
+            resources:
+                limits:
+                    cpus: '8'
+                    memory: 2100M
+        # networks:
+        #     - hr-net
+        #     - interna
+    # sonar:
+    #     container_name: sonarqube
+    #     image: sonarqube
+    #     ports:
+    #         - "9000:9000"
+    #         - "9092:9092"
+    #     volumes:
+    #         - /etc/gitlab
+    #         - /var/log/gitlab
+    #         - /var/opt/gitlab
+    #     deploy:
+    #         resources:
+    #             limits:
+    #                 cpus: '2'
+    #                 memory: 1000M
+
+volumes:
+    jenkins_backup:
+        external: true
+
+# networks:
+#     hr-net:
+#         external: true
+#     interna:
