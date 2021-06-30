@@ -1,5 +1,5 @@
 FROM jenkins/jenkins:jdk11
-LABEL Paulo Roberto <paulo.roberto@unifor.br>
+LABEL Paulo Roberto Mesquita da Silva <nagpaulo@gmail.com>
 
 USER root
 RUN apt-get update && apt-get install -y apt-transport-https \
